@@ -1,9 +1,9 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const request = require('request');
-const app = express()
+var express = require('express');
+var bodyParser = require('body-parser');
+var request = require('request');
+var app = express()
 
-const apiKey = '*****************';
+var apiKey = '80c1245dc664673c681da5a0f58cf629';
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,18 +14,22 @@ app.get('/', function (req, res) {
 })
 
 app.post('/', function (req, res) {
-  let city = req.body.city;
-  let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`
-
-  request(url, function (err, response, body) {
+  var city = req.body.city;
+  // var url = `https://api.openweathermap.org/data/2.5/find?q=${city}&units=metric&appid=${apiKey}`
+  var url = 'https://api.openweathermap.org/data/2.5/find?q='+city+'&units=metric&appid='+apiKey;
+  request(url, function (err, response, data) {
     if(err){
-      res.render('index', {weather: null, error: 'Error, please try again'});
+      res.render('index', {weather: null, error: err});
     } else {
-      let weather = JSON.parse(body)
-      if(weather.main == undefined){
+      //console.log(data)
+      var weather = JSON.parse(data)
+
+      if(weather.cod != 200){
         res.render('index', {weather: null, error: 'Error, please try again'});
       } else {
-        let weatherText = `It's ${weather.main.temp} degrees in ${weather.name}!`;
+        var w = weather.list[0];
+        console.log(w)
+        var weatherText = `It's ${w.main.temp} degrees in ${w.name}!`;
         res.render('index', {weather: weatherText, error: null});
       }
     }
