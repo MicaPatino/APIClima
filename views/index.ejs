@@ -12,10 +12,12 @@
         <form action="/" method="POST">
           <select name="location" id="provincias" required>
             <%
-            var options = provincies.provincias;
+            
+            var options = provinces.provincias;
+            
             for (var i=0; i < options.length; i++) {
             %>
-            <option value="<%= JSON.stringify(options[i].centroide)%>"><%= options[i].nombre%></option>
+            <option value="<%= JSON.stringify(options[i].centroide) %>"><%= options[i].nombre %></option>
             <%
             }
             %>
