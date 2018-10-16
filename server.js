@@ -9,14 +9,20 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs')
 
-app.get('/', function (req, res) {
-  res.render('index', {weather: null, error: null});
+
+
+app.get ('/', function (req,res){
+  
+  var url = 'https://apis.datos.gob.ar/georef/api/provincias';
+  request(url, function(err,response, data){
+    var provincies = JSON.parse(data);
+    res.render('index', {weather: null, error: null, provincies: provincies});
+  })
 })
 
 app.post('/', function (req, res) {
   var city = req.body.city;
-  // var url = `https://api.openweathermap.org/data/2.5/find?q=${city}&units=metric&appid=${apiKey}`
-  var url = 'https://api.openweathermap.org/data/2.5/find?q='+city+'&units=metric&appid='+apiKey;
+  var url = `https://api.openweathermap.org/data/2.5/find?q=${city}&units=metric&appid=${apiKey}`
   request(url, function (err, response, data) {
     if(err){
       res.render('index', {weather: null, error: err});
@@ -28,7 +34,7 @@ app.post('/', function (req, res) {
         res.render('index', {weather: null, error: 'Error, please try again'});
       } else {
         var w = weather.list[0];
-        console.log(w)
+        
         var weatherText = `It's ${w.main.temp} degrees in ${w.name}!`;
         res.render('index', {weather: weatherText, error: null});
       }
